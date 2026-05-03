@@ -14,6 +14,7 @@ export declare global {
     // * Application
     readonly NODE_ENV: RuntimeEnvironment
     readonly VITE_API_URL: `${'http' | 'https'}://${string}`
+    readonly VITE_WS_URL: `${'ws' | 'wss'}://${string}`
   }
 
   type Parameter<T> = T extends (param: infer Argument, ...rest: any) => any ? Argument : never
