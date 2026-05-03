@@ -13,7 +13,7 @@ export type PreviewParams = {
 
 export type PreviewHookReturn = {
   imgRef: React.RefObject<HTMLImageElement | null>
-  prevUrlRef: React.MutableRefObject<string | null>
+  prevUrlRef: React.RefObject<string | null>
   isConnected: boolean
   fps: number
   sendParams: (params: PreviewParams) => void
