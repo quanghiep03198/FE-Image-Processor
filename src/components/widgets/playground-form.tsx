@@ -46,6 +46,15 @@ const SLIDER_CONFIGS: SliderConfig[] = [
     description:
       'Reduce the amount of noise in the image, which can help improve the overall quality and clarity. Increasing the denoise level can help smooth out grainy or pixelated areas, but be careful not to overdo it, as it can also lead to a loss of detail.',
   },
+  {
+    key: 'contrast_bias',
+    label: 'Contrast',
+    min: -100,
+    max: 100,
+    step: 0.1,
+    description:
+      'Adjust the contrast bias to enhance or reduce the contrast in the image. Increasing the contrast bias can make the dark areas darker and the bright areas brighter, while decreasing it can create a more muted and softer look.',
+  },
   // {
   //   key: 'blur',
   //   label: 'Blur',
@@ -73,7 +82,8 @@ const DEFAULT_PARAMS: PreviewParams = {
   denoise: 0,
   brightness: 0,
   grayscale: 0,
-  jpeg_quality: 80,
+  contrast_bias: 0,
+  jpeg_quality: 100,
 }
 
 const PlaygroundForm = () => {

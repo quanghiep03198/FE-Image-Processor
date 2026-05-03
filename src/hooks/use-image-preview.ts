@@ -7,6 +7,7 @@ export type PreviewParams = {
   denoise: number
   brightness: number
   grayscale: number
+  contrast_bias: number
   jpeg_quality: number
 }
 
