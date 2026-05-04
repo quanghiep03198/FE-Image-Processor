@@ -2,6 +2,7 @@
 
 import { type IncomingHttpHeaders } from 'http'
 import type { HttpStatusCode } from '../constants/http-code'
+import type { Options } from 'redaxios'
 
 export declare global {
   type RuntimeEnvironment = 'production' | 'development' | 'test'
@@ -57,12 +58,12 @@ export declare global {
 
   }
 
-  type RequestHeaders = {
+  type RequestHeaders ={
     // copy every declared property from http.IncomingHttpHeaders
     // but remove index signatures
     [K in keyof IncomingHttpHeaders as string extends K ? never : number extends K ? never : K]: IncomingHttpHeaders[K]
     [`x-${string}`]: string | undefined | undefined;
-  }
+  } & Partial<Options['headers']>
 
   /**
    * @override

@@ -1,6 +1,6 @@
 import { useTheme, type UserTheme } from '@/providers/theme-provider'
-import { Icon, type IconProps } from '../ui/icon'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Icon, type IconProps } from '../../ui/icon'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select'
 
 const themeConfig: Array<{ icon: IconProps['name']; label: string; value: UserTheme }> = [
   { icon: 'Sun', label: 'Light', value: 'light' },

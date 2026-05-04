@@ -1,13 +1,15 @@
+import { uploadImage } from '@/apis/images/rpc/upload'
 import { useImagePreview, type PreviewParams } from '@/hooks/use-image-preview'
-import { uploadImage } from '@/rpc/upload'
 import { ImageUpIcon } from 'lucide-react'
-import { useRef, useState } from 'react'
-import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet } from '../ui/field'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
-import { Slider } from '../ui/slider'
-import { Spinner } from '../ui/spinner'
+import { useEffect, useRef, useState } from 'react'
+import { Badge } from '../../ui/badge'
+import { Button } from '../../ui/button'
+import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet } from '../../ui/field'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '../../ui/hover-card'
+import { Slider } from '../../ui/slider'
+import { Spinner } from '../../ui/spinner'
+
+const WS_SEND_INTERVAL_MS = 1000 / 5 // 15 FPS
 
 type SliderConfig = {
   key: keyof Omit<PreviewParams, 'jpeg_quality'>
@@ -92,9 +94,53 @@ const PlaygroundForm = () => {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<boolean>(false)
   const paramsRef = useRef<PreviewParams>({ ...DEFAULT_PARAMS })
+  const pendingParamsRef = useRef<PreviewParams | null>(null)
+  const lastSentAtRef = useRef<number>(0)
+  const sendTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [displayValues, setDisplayValues] = useState<PreviewParams>({ ...DEFAULT_PARAMS })
 
   const { imgRef, prevUrlRef, isConnected, fps, sendParams } = useImagePreview(sessionId)
+
+  const scheduleSendParams = (nextParams: PreviewParams, force = false) => {
+    pendingParamsRef.current = nextParams
+    const now = Date.now()
+    const elapsed = now - lastSentAtRef.current
+
+    if (force || elapsed >= WS_SEND_INTERVAL_MS) {
+      if (sendTimerRef.current) {
+        clearTimeout(sendTimerRef.current)
+        sendTimerRef.current = null
+      }
+
+      if (pendingParamsRef.current) {
+        sendParams(pendingParamsRef.current)
+        pendingParamsRef.current = null
+        lastSentAtRef.current = now
+      }
+
+      return
+    }
+
+    if (sendTimerRef.current) return
+
+    sendTimerRef.current = setTimeout(() => {
+      sendTimerRef.current = null
+
+      if (!pendingParamsRef.current) return
+
+      sendParams(pendingParamsRef.current)
+      pendingParamsRef.current = null
+      lastSentAtRef.current = Date.now()
+    }, WS_SEND_INTERVAL_MS - elapsed)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (sendTimerRef.current) {
+        clearTimeout(sendTimerRef.current)
+      }
+    }
+  }, [])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files?.[0]
@@ -126,13 +172,13 @@ const PlaygroundForm = () => {
     const value = Array.isArray(values) ? (values as number[])[0] : (values as number)
     paramsRef.current = { ...paramsRef.current, [key]: value }
     setDisplayValues((prev) => ({ ...prev, [key]: value }))
-    sendParams(paramsRef.current)
+    scheduleSendParams(paramsRef.current)
   }
 
   const handleReset = () => {
     paramsRef.current = { ...DEFAULT_PARAMS }
     setDisplayValues({ ...DEFAULT_PARAMS })
-    sendParams(paramsRef.current)
+    scheduleSendParams(paramsRef.current, true)
   }
 
   return (
@@ -181,7 +227,6 @@ const PlaygroundForm = () => {
             </div>
           )}
         </div>
-
         {/* Right column — controls */}
         <FieldSet className="h-full basis-1/3 overflow-hidden pr-2">
           <FieldLegend>Enhancement</FieldLegend>

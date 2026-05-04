@@ -31,12 +31,7 @@ export function useImagePreview(sessionId: string | null): PreviewHookReturn {
   useEffect(() => {
     console.log('useImagePreview, sessionId', sessionId)
 
-    if (!sessionId) {
-      // if (fallbackUrl && imgRef.current) {
-      //   imgRef.current.src = fallbackUrl
-      // }
-      return
-    }
+    if (!sessionId) return
 
     const ws = new WebSocket(`${import.meta.env.VITE_WS_URL}/ws/preview/${sessionId}`)
     ws.binaryType = 'blob'

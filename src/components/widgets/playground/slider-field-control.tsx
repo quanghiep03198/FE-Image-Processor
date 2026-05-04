@@ -1,9 +1,9 @@
 import type { AnyFieldApi } from '@tanstack/react-form'
 import { useEffect, useState } from 'react'
-import { Badge } from '../ui/badge'
-import { Field, FieldError, FieldLabel } from '../ui/field'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card'
-import { Slider } from '../ui/slider'
+import { Badge } from '../../ui/badge'
+import { Field, FieldError, FieldLabel } from '../../ui/field'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '../../ui/hover-card'
+import { Slider } from '../../ui/slider'
 
 type SliderFieldControlProps = {
   field: AnyFieldApi
