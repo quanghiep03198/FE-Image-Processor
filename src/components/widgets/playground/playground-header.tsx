@@ -1,7 +1,14 @@
 import { CopyIcon, ImageDownIcon, Share2Icon } from 'lucide-react'
-import { Button } from '../ui/button'
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '../ui/input-group'
-import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from '../ui/popover'
+import { Button } from '../../ui/button'
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '../../ui/input-group'
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from '../../ui/popover'
 import ThemeSelect from './theme-select'
 
 const PlaygroundHeader = () => {
@@ -24,7 +31,9 @@ const PlaygroundHeader = () => {
           <PopoverContent className="w-lg">
             <PopoverHeader>
               <PopoverTitle>Share your image</PopoverTitle>
-              <PopoverDescription>Share your image with others by generating a unique link. You can also set an expiration time for the</PopoverDescription>
+              <PopoverDescription>
+                Share your image with others by generating a unique link. You can also set an expiration time for the
+              </PopoverDescription>
               <InputGroup>
                 <InputGroupInput placeholder="https://example.com/your-image-link" readOnly />
                 <InputGroupAddon>

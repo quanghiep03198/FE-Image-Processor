@@ -22,16 +22,13 @@ export const axiosRequest = axios.create({
 })
 
 export async function axiosRequestWithAuth<R = any, D = any>(config: RequestConfig<D>) {
-  const accessToken = getCookie('access_token')
+  const cookieToken = getCookie('access_token')
 
-  const response = await axiosRequest<R>({
-    ...config,
-    headers: {
-      ...(config.headers as Options['headers']),
-      authorization: `Bearer ${accessToken}`,
-    },
-    ...(config.data && { data: config.data as D }),
-  })
+  config.headers ??= {}
+
+  config.headers.authorization ??= `Bearer ${cookieToken}`
+
+  const response = await axiosRequest<R>(config as Options)
 
   if (response.status === HttpStatusCode.UNAUTHORIZED) {
     try {
@@ -41,13 +38,13 @@ export async function axiosRequestWithAuth<R = any, D = any>(config: RequestConf
       // Update the access token in cookies to ensure subsequent requests use the new token
       setCookie('access_token', refreshToken, DEFAULT_COOKIE_OPTIONS)
 
-      if (res.status === HttpStatusCode.OK && refreshToken) {
-        return await axiosRequestWithAuth<R, D>({
+      if (res.status === HttpStatusCode.OK && (typeof refreshToken as string)) {
+        return await axiosRequest<R>({
           ...config,
           headers: {
             ...config.headers,
             authorization: `Bearer ${refreshToken}`,
-          },
+          } as Options['headers'],
         })
       }
     } catch (error) {

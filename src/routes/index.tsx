@@ -1,5 +1,5 @@
-import PlaygroundForm from '@/components/widgets/playground-form'
-import PlaygroundHeader from '@/components/widgets/playground-header'
+import PlaygroundForm from '@/components/widgets/playground/playground-form'
+import PlaygroundHeader from '@/components/widgets/playground/playground-header'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { imageFiltersSchema } from '@/schemas/image-filters.schema'
 import { createFileRoute } from '@tanstack/react-router'

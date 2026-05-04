@@ -6,20 +6,21 @@ export const requestMiddleware = createMiddleware({ type: 'request' }).server(as
   const contextWithAuth = context as { user: IUser; accessToken: string } | undefined
 
   return await next({
-    ...contextWithAuth,
-    request: async <R = any, D = any>(config: RequestConfig<D>) => {
-      config.headers ??= {}
+    context: {
+      ...contextWithAuth,
+      request: async <R = any, D = any>(config: RequestConfig<D>) => {
+        config.headers ??= {}
 
-      const response: Awaited<R> = await axiosRequestWithAuth<R, D>({
-        ...config,
-        headers: {
-          ...config.headers!,
-          ...(!!contextWithAuth?.accessToken && {
-            authorization: `Bearer ${contextWithAuth.accessToken}`,
-          }),
-        },
-      })
-      return response
+        return await axiosRequestWithAuth<R, D>({
+          ...config,
+          headers: {
+            ...config.headers,
+            ...(!!contextWithAuth?.accessToken && {
+              authorization: `Bearer ${contextWithAuth.accessToken}`,
+            }),
+          },
+        })
+      },
     },
   })
 })
