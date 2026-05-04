@@ -19,6 +19,12 @@ export declare global {
 
   type Parameter<T> = T extends (param: infer Argument, ...rest: any) => any ? Argument : never
 
+  interface IBaseDocument {
+    _id: string
+    created_at: Date
+    updated_at: Date
+  }
+
   interface Pagination<T = any> {
     hasNextPage: boolean
     hasPrevPage: boolean
