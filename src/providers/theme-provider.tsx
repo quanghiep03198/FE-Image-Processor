@@ -34,16 +34,19 @@ const handleThemeChange = createClientOnlyFn((userTheme: UserTheme) => {
 
   const root = document.documentElement
   root.classList.remove('light', 'dark', 'system')
+  requestAnimationFrame(() => {
+    root.classList.add('no-transition')
+  })
 
   if (validatedTheme === 'system') {
     const systemTheme = getSystemTheme()
     root.classList.add(systemTheme, 'system')
   } else {
     root.classList.add(validatedTheme)
-    requestAnimationFrame(() => {
-      root.classList.remove('no-transition')
-    })
   }
+  requestAnimationFrame(() => {
+    root.classList.remove('no-transition')
+  })
 })
 
 const setupPreferredListener = createClientOnlyFn(() => {
@@ -108,6 +111,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     </ThemeContext>
   )
 }
+
+export type Theme = 'light' | 'dark' | 'system'
 
 export const useTheme = () => {
   const context = use(ThemeContext)
