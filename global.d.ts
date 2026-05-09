@@ -13,15 +13,16 @@ export declare global {
 
   interface InternalImportMetaEnv {
     // * Application
-    readonly NODE_ENV: RuntimeEnvironment
-    readonly VITE_API_URL: `${'http' | 'https'}://${string}`
+    readonly VITE_NODE_ENV: RuntimeEnvironment
+    readonly VITE_API_URL: `${'http' | 'https'}://${string}/api`
+    readonly VITE_IMAGE_URL: `${'http' | 'https'}://${string}/images`
     readonly VITE_WS_URL: `${'ws' | 'wss'}://${string}`
   }
 
   type Parameter<T> = T extends (param: infer Argument, ...rest: any) => any ? Argument : never
 
   interface IBaseDocument {
-    _id: string
+    id: string
     created_at: Date
     updated_at: Date
   }
@@ -52,6 +53,8 @@ export declare global {
   type AnonymousFunction = (...args: any[]) => any
 
   type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS'
+
+  type ImageMimeType = 'image/png' | 'image/jpeg'| 'image/jpg'| 'image/webp'  | 'image/gif'  | 'image/bmp' | 'image/svg+xml'
 
   interface RequestQuery {
     [key: RequestQueryKey | string]: string | number | boolean
