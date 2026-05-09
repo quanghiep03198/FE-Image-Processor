@@ -7,6 +7,22 @@
 
 @plugin 'tailwind-scrollbar';
 
+@theme {
+  --animate-shimmer: shimmer 5s linear infinite;
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    50% {
+      background-position: 0% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: 'Inter Variable', sans-serif;
@@ -143,6 +159,10 @@
   }
   html {
     @apply font-sans;
+  }
+
+  input:autofill input:-internal-autofill-selected {
+    @apply bg-input/50!;
   }
 }
 
