@@ -11,7 +11,10 @@ interface ErrorBoundaryFallbackProps {
   resetError?: (...args: any[]) => void
 }
 
-export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ error, resetError }): React.ReactElement => {
+export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({
+  error,
+  resetError,
+}): React.ReactElement => {
   const router = useRouter()
 
   return (
@@ -25,9 +28,10 @@ export const ErrorBoundaryFallback: React.FC<ErrorBoundaryFallbackProps> = ({ er
           <Typography variant="h4">Đã có lỗi xảy ra</Typography>
         </div>
         <Typography variant="p" className="mt-2 mb-6 text-base leading-7" color="muted">
-          Xin lỗi vì sự bất tiện này. Nếu vấn đề vẫn tiếp diễn, vui lòng liên hệ với bộ phận hỗ trợ của chúng tôi. Chúng tôi sẽ cố gắng khắc phục sự cố này càng
-          sớm càng tốt. Cảm ơn bạn đã thông cảm và kiên nhẫn. Chúng tôi đánh giá cao sự hỗ trợ của bạn trong việc cải thiện dịch vụ của chúng tôi. Chúng tôi sẽ
-          thông báo cho bạn khi vấn đề đã được giải quyết.
+          Xin lỗi vì sự bất tiện này. Nếu vấn đề vẫn tiếp diễn, vui lòng liên hệ với bộ phận hỗ trợ của chúng tôi. Chúng
+          tôi sẽ cố gắng khắc phục sự cố này càng sớm càng tốt. Cảm ơn bạn đã thông cảm và kiên nhẫn. Chúng tôi đánh giá
+          cao sự hỗ trợ của bạn trong việc cải thiện dịch vụ của chúng tôi. Chúng tôi sẽ thông báo cho bạn khi vấn đề đã
+          được giải quyết.
         </Typography>
         <Dialog>
           <DialogTrigger
