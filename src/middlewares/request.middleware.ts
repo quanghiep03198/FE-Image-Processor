@@ -1,5 +1,7 @@
 import type { IUser } from '@/apis/auth/types'
-import { axiosRequestWithAuth, type RequestConfig } from '@/lib/axios'
+import type { RequestConfig } from '@/configs/axios.config'
+import { request } from '@/lib/request'
+
 import { createMiddleware } from '@tanstack/react-start'
 
 export const requestMiddleware = createMiddleware({ type: 'request' }).server(async ({ context, next }) => {
@@ -8,11 +10,12 @@ export const requestMiddleware = createMiddleware({ type: 'request' }).server(as
   return await next({
     context: {
       ...contextWithAuth,
-      request: async <R = any, D = any>(config: RequestConfig<D>) => {
+      request: async <R = any, D = any>({ method = 'GET', ...config }: RequestConfig<D>) => {
         config.headers ??= {}
 
-        return await axiosRequestWithAuth<R, D>({
+        return await request<R, D>({
           ...config,
+          method,
           headers: {
             ...config.headers,
             ...(!!contextWithAuth?.accessToken && {

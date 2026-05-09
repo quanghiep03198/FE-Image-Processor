@@ -36,6 +36,7 @@ export async function request<R = any, D = any>(config: RequestConfig<D>) {
           throw redirect({ to: '/signin' })
         }
       }
+      console.error(error)
       return Promise.reject(error)
     })
 }
