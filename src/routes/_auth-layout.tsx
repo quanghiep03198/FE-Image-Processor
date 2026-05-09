@@ -40,8 +40,17 @@ function RouteComponent() {
           <div className="w-full px-6">
             <Outlet />
           </div>
-          <div className="w-full p-6 text-center text-sm text-muted-foreground">
-            Powered by <span className="inline-flex text-foreground">NVIDIA &#215; OpenCV</span>
+          <div className="flex flex-col items-center gap-6 p-6">
+            <div className="w-fulltext-center text-sm text-muted-foreground">
+              Powered by <span className="inline-flex text-foreground">NVIDIA &#215; OpenCV</span>
+            </div>
+            <Typography color="muted" variant="small" className="text-center">
+              &copy; {new Date().getFullYear()} copyright by{' '}
+              <a href="https://github.com/quanghiep03198" target="_blank" className="text-primary hover:underline">
+                quanghiep03198
+              </a>
+              . All rights reserved.
+            </Typography>
           </div>
         </div>
       </div>
