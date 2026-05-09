@@ -1,10 +1,11 @@
+import { useGetProfileQuery } from '@/apis/auth/hooks'
 import { useSaveImageMutation } from '@/apis/images/hooks'
 import { uploadImage } from '@/apis/images/rpc/upload'
 import { SLIDER_CONFIGS } from '@/configs/playground.config'
 import { useImagePreview, type PreviewParams } from '@/hooks/use-image-preview'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import { useHydrated } from '@tanstack/react-router'
-import { ImageUpIcon } from 'lucide-react'
+import { ImageUpIcon, LockIcon } from 'lucide-react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '../../ui/badge'
@@ -65,6 +66,8 @@ const previewUiReducer = (state: PreviewUiState, action: PreviewUiAction): Previ
 }
 
 const PlaygroundForm: React.FC = () => {
+  const { data: user } = useGetProfileQuery()
+
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [previewUi, dispatchPreviewUi] = useReducer(previewUiReducer, initialPreviewUiState)
   const [displayValues, setDisplayValues] = useState<PreviewParams>({ ...DEFAULT_PARAMS })
@@ -127,6 +130,8 @@ const PlaygroundForm: React.FC = () => {
   }
 
   const handleSaveImage = async () => {
+    if (!user) return toast.error('You need to sign in to save images')
+
     try {
       await mutateAsync(sessionId!)
       toast.success('Image saved successfully!')
@@ -162,7 +167,13 @@ const PlaygroundForm: React.FC = () => {
   }
 
   useHotkey('Mod+S', () => {
+    if (!user) {
+      toast.error('You need to sign in to save images')
+      return
+    }
+
     if (!previewUi.hasPreview || isPending) return
+
     handleSaveImage()
   })
 
@@ -260,8 +271,9 @@ const PlaygroundForm: React.FC = () => {
               Reset
             </Button>
             <Button type="button" onClick={() => handleSaveImage()} disabled={!previewUi.hasPreview || isPending}>
+              {!user && <LockIcon className="size-4" />}
               {isPending && <Spinner />}
-              Save
+              {!user ? 'Sign in to save' : 'Save'}
             </Button>
           </Field>
         </FieldGroup>

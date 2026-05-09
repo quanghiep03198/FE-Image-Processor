@@ -135,6 +135,7 @@ const GalleryTable: React.FC = () => {
         enableColumnFilter: true,
         enableSorting: true,
         enableGlobalFilter: true,
+        size: 200,
         sortingFn: 'alphanumericCaseSensitive',
         cell: ({ getValue }) => {
           const owner = getValue()
@@ -230,18 +231,18 @@ const GalleryTable: React.FC = () => {
 
   return (
     <div
-      className="@container-[size]/table h-[calc(100cqh-80px)] flex-1 overflow-auto [--table-header-height:48px] [--table-row-height:60px]"
+      className="@container-[size]/table relative h-[calc(100cqh-80px)] flex-1 overflow-auto [--table-header-height:48px] [--table-row-height:60px]"
       style={{ ...columnSizeVars }}
       ref={containerRef}
     >
       <Table className="w-full table-auto">
-        <TableHeader className="sticky top-0 z-20">
+        <TableHeader className="sticky! top-0 z-20 [&_th]:sticky [&_th]:top-0">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="sticky top-0">
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="group relative"
+                  className="group"
                   style={{ width: `calc(var(--header-${header?.id}-size)*1px)` }}
                 >
                   <div className="line-clamp-1">
