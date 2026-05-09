@@ -4,84 +4,50 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import { nitro } from 'nitro/vite'
 import { defineConfig } from 'vite'
-import { VitePWA } from 'vite-plugin-pwa'
-import viteTsConfigPaths from 'vite-tsconfig-paths'
 
 const config = defineConfig({
+  resolve: {
+    // This enables built-in support for path aliases defined in tsconfig.json
+    tsconfigPaths: true,
+  },
   plugins: [
     devtools(),
     nitro(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
-      manifest: false,
-      workbox: {
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//, /^\/sw\.js$/, /^\/workbox-.*\.js$/, /\.(wasm|map)$/],
-        globPatterns: ['**/*.{html,css,js,ico,png,jpg,svg,webp,woff2}'],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 3 MiB
-        skipWaiting: true,
-        clientsClaim: true,
-        navigationPreload: true,
-        // runtimeCaching: [
-        //   {
-        //     // Hashed assets under /assets/ are already precached, but this ensures
-        //     // any dynamically loaded chunks are also cached with CacheFirst
-        //     urlPattern: ({ url }) => url.pathname.startsWith('/assets/'),
-        //     handler: 'CacheFirst',
-        //     options: {
-        //       cacheName: 'assets-cache',
-        //       expiration: {
-        //         maxEntries: 500,
-        //         maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year (hashed filenames)
-        //         purgeOnQuotaError: true,
-        //       },
-        //       cacheableResponse: {
-        //         statuses: [0, 200],
-        //       },
-        //     },
-        //   },
-        //   {
-        //     // Static resources in root (favicon, icons, images) - not hashed, use StaleWhileRevalidate
-        //     urlPattern: /\.(?:ico|png|jpg|jpeg|svg|webp|woff2?)$/i,
-        //     handler: 'StaleWhileRevalidate',
-        //     options: {
-        //       cacheName: 'static-resources-cache',
-        //       expiration: {
-        //         maxEntries: 500,
-        //         maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-        //         purgeOnQuotaError: true,
-        //       },
-        //       cacheableResponse: {
-        //         statuses: [0, 200],
-        //       },
-        //     },
-        //   },
-        //   {
-        //     // API calls - never cache
-        //     urlPattern: ({ url }) => url.pathname.startsWith('/api'),
-        //     handler: 'NetworkOnly',
-        //   },
-        // ],
-        cleanupOutdatedCaches: true,
-      },
-      devOptions: {
-        enabled: false,
-        type: 'module',
-        suppressWarnings: true,
-        navigateFallback: '/index.html',
-      },
-    }),
     // this is the plugin that enables path aliases
-    viteTsConfigPaths({
-      projects: ['./tsconfig.json'],
-    }),
+    // viteTsConfigPaths({
+    //   projects: ['./tsconfig.json'],
+    // }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),
   ],
   server: {
     port: 3198,
+  },
+  preview: {
+    port: 1205,
+  },
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            { name: '@tanstack/react-query', test: /@tanstack\/react-query/ },
+            { name: '@tanstack/react-router', test: /@tanstack\/react-router/ },
+            { name: '@tanstack/react-table', test: /@tanstack\/react-table/ },
+            { name: '@tanstack/react-virtual', test: /@tanstack\/react-virtual/ },
+            { name: '@tanstack/react-form', test: /@tanstack\/react-form/ },
+            { name: 'react-resizable-panels', test: /react-resizable-panels/ },
+            { name: 'recharts', test: /recharts/ },
+            { name: 'qs', test: /qs/ },
+            { name: 'lz-string', test: /lz-string/ },
+            { name: 'lodash-es', test: /lodash-es/ },
+            { name: 'sonner', test: /sonner/ },
+            { name: 'zod', test: /zod/ },
+          ],
+        },
+      },
+    },
   },
 })
 
