@@ -9,68 +9,212 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as PlaygroundLayoutRouteImport } from './routes/_playground-layout'
+import { Route as AuthLayoutRouteImport } from './routes/_auth-layout'
+import { Route as PlaygroundLayoutIndexRouteImport } from './routes/_playground-layout.index'
+import { Route as PlaygroundLayoutMyImagesRouteImport } from './routes/_playground-layout.my-images'
+import { Route as AuthLayoutSignupRouteImport } from './routes/_auth-layout.signup'
+import { Route as AuthLayoutSigninRouteImport } from './routes/_auth-layout.signin'
+import { Route as AuthLayoutForgotPasswordRouteImport } from './routes/_auth-layout.forgot-password'
+import { Route as ApiImagesDownloadRouteImport } from './routes/api/images.download'
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const PlaygroundLayoutRoute = PlaygroundLayoutRouteImport.update({
+  id: '/_playground-layout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthLayoutRoute = AuthLayoutRouteImport.update({
+  id: '/_auth-layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlaygroundLayoutIndexRoute = PlaygroundLayoutIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => PlaygroundLayoutRoute,
+} as any)
+const PlaygroundLayoutMyImagesRoute =
+  PlaygroundLayoutMyImagesRouteImport.update({
+    id: '/my-images',
+    path: '/my-images',
+    getParentRoute: () => PlaygroundLayoutRoute,
+  } as any)
+const AuthLayoutSignupRoute = AuthLayoutSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AuthLayoutRoute,
+} as any)
+const AuthLayoutSigninRoute = AuthLayoutSigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => AuthLayoutRoute,
+} as any)
+const AuthLayoutForgotPasswordRoute =
+  AuthLayoutForgotPasswordRouteImport.update({
+    id: '/forgot-password',
+    path: '/forgot-password',
+    getParentRoute: () => AuthLayoutRoute,
+  } as any)
+const ApiImagesDownloadRoute = ApiImagesDownloadRouteImport.update({
+  id: '/api/images/download',
+  path: '/api/images/download',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
+  '/': typeof PlaygroundLayoutIndexRoute
+  '/forgot-password': typeof AuthLayoutForgotPasswordRoute
+  '/signin': typeof AuthLayoutSigninRoute
+  '/signup': typeof AuthLayoutSignupRoute
+  '/my-images': typeof PlaygroundLayoutMyImagesRoute
+  '/api/images/download': typeof ApiImagesDownloadRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
+  '/': typeof PlaygroundLayoutIndexRoute
+  '/forgot-password': typeof AuthLayoutForgotPasswordRoute
+  '/signin': typeof AuthLayoutSigninRoute
+  '/signup': typeof AuthLayoutSignupRoute
+  '/my-images': typeof PlaygroundLayoutMyImagesRoute
+  '/api/images/download': typeof ApiImagesDownloadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
+  '/_auth-layout': typeof AuthLayoutRouteWithChildren
+  '/_playground-layout': typeof PlaygroundLayoutRouteWithChildren
+  '/_auth-layout/forgot-password': typeof AuthLayoutForgotPasswordRoute
+  '/_auth-layout/signin': typeof AuthLayoutSigninRoute
+  '/_auth-layout/signup': typeof AuthLayoutSignupRoute
+  '/_playground-layout/my-images': typeof PlaygroundLayoutMyImagesRoute
+  '/_playground-layout/': typeof PlaygroundLayoutIndexRoute
+  '/api/images/download': typeof ApiImagesDownloadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths:
+    | '/'
+    | '/forgot-password'
+    | '/signin'
+    | '/signup'
+    | '/my-images'
+    | '/api/images/download'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/login'
+  to:
+    | '/'
+    | '/forgot-password'
+    | '/signin'
+    | '/signup'
+    | '/my-images'
+    | '/api/images/download'
+  id:
+    | '__root__'
+    | '/_auth-layout'
+    | '/_playground-layout'
+    | '/_auth-layout/forgot-password'
+    | '/_auth-layout/signin'
+    | '/_auth-layout/signup'
+    | '/_playground-layout/my-images'
+    | '/_playground-layout/'
+    | '/api/images/download'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  LoginRoute: typeof LoginRoute
+  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
+  PlaygroundLayoutRoute: typeof PlaygroundLayoutRouteWithChildren
+  ApiImagesDownloadRoute: typeof ApiImagesDownloadRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/_playground-layout': {
+      id: '/_playground-layout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PlaygroundLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_auth-layout': {
+      id: '/_auth-layout'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_playground-layout/': {
+      id: '/_playground-layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof PlaygroundLayoutIndexRouteImport
+      parentRoute: typeof PlaygroundLayoutRoute
+    }
+    '/_playground-layout/my-images': {
+      id: '/_playground-layout/my-images'
+      path: '/my-images'
+      fullPath: '/my-images'
+      preLoaderRoute: typeof PlaygroundLayoutMyImagesRouteImport
+      parentRoute: typeof PlaygroundLayoutRoute
+    }
+    '/_auth-layout/signup': {
+      id: '/_auth-layout/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof AuthLayoutSignupRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
+    '/_auth-layout/signin': {
+      id: '/_auth-layout/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof AuthLayoutSigninRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
+    '/_auth-layout/forgot-password': {
+      id: '/_auth-layout/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof AuthLayoutForgotPasswordRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
+    '/api/images/download': {
+      id: '/api/images/download'
+      path: '/api/images/download'
+      fullPath: '/api/images/download'
+      preLoaderRoute: typeof ApiImagesDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
+interface AuthLayoutRouteChildren {
+  AuthLayoutForgotPasswordRoute: typeof AuthLayoutForgotPasswordRoute
+  AuthLayoutSigninRoute: typeof AuthLayoutSigninRoute
+  AuthLayoutSignupRoute: typeof AuthLayoutSignupRoute
+}
+
+const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
+  AuthLayoutForgotPasswordRoute: AuthLayoutForgotPasswordRoute,
+  AuthLayoutSigninRoute: AuthLayoutSigninRoute,
+  AuthLayoutSignupRoute: AuthLayoutSignupRoute,
+}
+
+const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
+  AuthLayoutRouteChildren,
+)
+
+interface PlaygroundLayoutRouteChildren {
+  PlaygroundLayoutMyImagesRoute: typeof PlaygroundLayoutMyImagesRoute
+  PlaygroundLayoutIndexRoute: typeof PlaygroundLayoutIndexRoute
+}
+
+const PlaygroundLayoutRouteChildren: PlaygroundLayoutRouteChildren = {
+  PlaygroundLayoutMyImagesRoute: PlaygroundLayoutMyImagesRoute,
+  PlaygroundLayoutIndexRoute: PlaygroundLayoutIndexRoute,
+}
+
+const PlaygroundLayoutRouteWithChildren =
+  PlaygroundLayoutRoute._addFileChildren(PlaygroundLayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  LoginRoute: LoginRoute,
+  AuthLayoutRoute: AuthLayoutRouteWithChildren,
+  PlaygroundLayoutRoute: PlaygroundLayoutRouteWithChildren,
+  ApiImagesDownloadRoute: ApiImagesDownloadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
