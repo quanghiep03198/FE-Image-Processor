@@ -8,7 +8,10 @@ export type PreviewParams = {
   brightness: number
   grayscale: number
   contrast_bias: number
-  jpeg_quality: number
+  threshold: number
+  log_transform: number
+  power_law: number
+  webp_quality: number
 }
 
 export type PreviewHookReturn = {
@@ -29,8 +32,6 @@ export function useImagePreview(sessionId: string | null): PreviewHookReturn {
   const [fps, setFps] = useState(0)
 
   useEffect(() => {
-    console.log('useImagePreview, sessionId', sessionId)
-
     if (!sessionId) return
 
     const ws = new WebSocket(`${import.meta.env.VITE_WS_URL}/ws/preview/${sessionId}`)
@@ -43,8 +44,6 @@ export function useImagePreview(sessionId: string | null): PreviewHookReturn {
 
     ws.onmessage = (e: MessageEvent<Blob>) => {
       const newUrl = URL.createObjectURL(e.data)
-
-      console.log('newUrl', newUrl)
 
       if (prevUrlRef.current) {
         URL.revokeObjectURL(prevUrlRef.current)
