@@ -1,12 +1,11 @@
 import { Button } from '@/components/ui/button'
-import { ButtonGroup, ButtonGroupSeparator } from '@/components/ui/button-group'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { format, subDays } from 'date-fns'
 import { isNil, omit, omitBy } from 'lodash-es'
-import { CalendarIcon, FileIcon, LayoutGridIcon, MenuIcon, XIcon } from 'lucide-react'
+import { CalendarIcon, FileIcon, XIcon } from 'lucide-react'
 import { Activity, useMemo, useState } from 'react'
 
 const GalleryToolbar: React.FC = () => {
@@ -17,7 +16,7 @@ const GalleryToolbar: React.FC = () => {
   const navigate = useNavigate({ from: '/my-images' })
 
   return (
-    <div className="flex h-(--gallery-toolbar-height) items-center gap-x-2">
+    <div className="flex h-[calc(var(--gallery-toolbar-height)*1px)] items-center gap-x-2">
       <MimeTypeSelect />
       <CreateDateSelect />
       <Activity mode={Object.values(search).every(isNil) ? 'hidden' : 'visible'}>
@@ -29,16 +28,6 @@ const GalleryToolbar: React.FC = () => {
           Clear filters
         </Button>
       </Activity>
-
-      <ButtonGroup className="ml-auto">
-        <Button variant="outline">
-          <MenuIcon />
-        </Button>
-        <ButtonGroupSeparator />
-        <Button variant="outline">
-          <LayoutGridIcon />
-        </Button>
-      </ButtonGroup>
     </div>
   )
 }

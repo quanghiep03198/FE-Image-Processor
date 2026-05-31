@@ -16,7 +16,10 @@ export const { PubSubProvider, usePubSub, usePubSubSubscription } =
 const Gallery: React.FC = () => {
   return (
     <PubSubProvider>
-      <div className="space-y-6 [--gallery-toolbar-height:80px]">
+      <div
+        className="space-y-[calc(var(--gallery-layout-spacing)*1px)]"
+        style={{ '--gallery-layout-spacing': 24, '--gallery-toolbar-height': 80 } as React.CSSProperties}
+      >
         <GalleryToolbar />
         <GalleryTable />
       </div>

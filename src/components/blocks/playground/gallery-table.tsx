@@ -231,7 +231,7 @@ const GalleryTable: React.FC = () => {
 
   return (
     <div
-      className="@container-[size]/table relative h-[calc(100cqh-80px)] flex-1 overflow-auto [--table-header-height:48px] [--table-row-height:60px]"
+      className="@container-[size]/table relative h-[calc(100cqh-152px)] flex-1 overflow-auto [--table-header-height:48px] [--table-row-height:60px]"
       style={{ ...columnSizeVars }}
       ref={containerRef}
     >

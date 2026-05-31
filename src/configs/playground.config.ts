@@ -3,16 +3,20 @@ import type { PreviewParams } from '@/hooks/use-image-preview'
 export type SliderConfig = {
   key: keyof PreviewParams
   label: string
+  group: 'Basic Adjustments' | 'Advanced Adjustments' | 'Output Quality'
   min: number
   max: number
   step: number
   description: string
 }
 
-export const SLIDER_CONFIGS: SliderConfig[] = [
+type BasicSliderConfig = Omit<SliderConfig, 'key'> & { key: Exclude<keyof PreviewParams, 'histogram'> }
+
+export const BASIC_SLIDER_CONFIGS: BasicSliderConfig[] = [
   {
     key: 'brightness',
     label: 'Brightness',
+    group: 'Basic Adjustments',
     min: -1,
     max: 1,
     step: 0.01,
@@ -22,6 +26,7 @@ export const SLIDER_CONFIGS: SliderConfig[] = [
   {
     key: 'grayscale',
     label: 'Grayscale',
+    group: 'Basic Adjustments',
     min: 0,
     max: 1,
     step: 0.01,
@@ -29,8 +34,29 @@ export const SLIDER_CONFIGS: SliderConfig[] = [
       'Convert the image to grayscale by adjusting the intensity of the colors. A value of 0 will keep the original colors, while a value of 1 will convert the image to complete grayscale.',
   },
   {
-    key: 'blur',
-    label: 'Blur',
+    key: 'gaussian_blur',
+    label: 'Gaussian Blur',
+    group: 'Advanced Adjustments',
+    min: 0,
+    max: 3,
+    step: 0.01,
+    description:
+      'Reduce the amount of noise in the image, which can help improve the overall quality and clarity. Increasing the denoise level can help smooth out grainy or pixelated areas, but be careful not to overdo it, as it can also lead to a loss of detail.',
+  },
+  {
+    key: 'median_blur',
+    label: 'Median Blur',
+    group: 'Advanced Adjustments',
+    min: 0,
+    max: 3,
+    step: 0.01,
+    description:
+      'Reduce the amount of noise in the image, which can help improve the overall quality and clarity. Increasing the denoise level can help smooth out grainy or pixelated areas, but be careful not to overdo it, as it can also lead to a loss of detail.',
+  },
+  {
+    key: 'bilateral_blur',
+    label: 'Bilateral Blur',
+    group: 'Advanced Adjustments',
     min: 0,
     max: 3,
     step: 0.01,
@@ -40,6 +66,7 @@ export const SLIDER_CONFIGS: SliderConfig[] = [
   {
     key: 'denoise',
     label: 'Denoise',
+    group: 'Advanced Adjustments',
     min: 0,
     max: 5,
     step: 0.01,
@@ -49,6 +76,7 @@ export const SLIDER_CONFIGS: SliderConfig[] = [
   {
     key: 'contrast_bias',
     label: 'Contrast',
+    group: 'Basic Adjustments',
     min: -0.8,
     max: 1.5,
     step: 0.01,
@@ -58,6 +86,7 @@ export const SLIDER_CONFIGS: SliderConfig[] = [
   {
     key: 'threshold',
     label: 'Threshold',
+    group: 'Advanced Adjustments',
     min: 0,
     max: 1,
     step: 0.01,
@@ -67,6 +96,7 @@ export const SLIDER_CONFIGS: SliderConfig[] = [
   {
     key: 'log_transform',
     label: 'Log Transform',
+    group: 'Advanced Adjustments',
     min: 0,
     max: 1,
     step: 0.01,
@@ -76,6 +106,7 @@ export const SLIDER_CONFIGS: SliderConfig[] = [
   {
     key: 'sharpen',
     label: 'Sharpen',
+    group: 'Advanced Adjustments',
     min: 0,
     max: 10,
     step: 0.01,
@@ -85,6 +116,7 @@ export const SLIDER_CONFIGS: SliderConfig[] = [
   {
     key: 'power_law',
     label: 'Power Law',
+    group: 'Advanced Adjustments',
     min: 0,
     max: 3,
     step: 0.05,
@@ -94,6 +126,7 @@ export const SLIDER_CONFIGS: SliderConfig[] = [
   {
     key: 'webp_quality',
     label: 'Quality',
+    group: 'Output Quality',
     min: 1,
     max: 100,
     step: 1,

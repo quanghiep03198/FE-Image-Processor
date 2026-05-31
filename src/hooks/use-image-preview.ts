@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export type PreviewParams = {
-  blur: number
+  gaussian_blur: number
+  median_blur: number
+  bilateral_blur: number
   sharpen: number
   enhance: number
   denoise: number
@@ -12,6 +14,12 @@ export type PreviewParams = {
   log_transform: number
   power_law: number
   webp_quality: number
+  histogram: {
+    r: number
+    g: number
+    b: number
+    a: number
+  }
 }
 
 export type PreviewHookReturn = {

@@ -1,22 +1,26 @@
 import { useGetProfileQuery } from '@/apis/auth/hooks'
 import { useSaveImageMutation } from '@/apis/images/hooks'
 import { uploadImage } from '@/apis/images/rpc/upload'
-import { SLIDER_CONFIGS } from '@/configs/playground.config'
+import { BASIC_SLIDER_CONFIGS } from '@/configs/playground.config'
 import { useImagePreview, type PreviewParams } from '@/hooks/use-image-preview'
+import { cn } from '@/lib/utils'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import { useHydrated } from '@tanstack/react-router'
+import { groupBy } from 'lodash-es'
 import { ImageUpIcon, LockIcon } from 'lucide-react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '../../ui/badge'
 import { Button } from '../../ui/button'
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet } from '../../ui/field'
+import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator, FieldSet } from '../../ui/field'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../../ui/hover-card'
 import { Slider } from '../../ui/slider'
 import { Spinner } from '../../ui/spinner'
 
 const DEFAULT_PARAMS: PreviewParams = {
-  blur: 0,
+  gaussian_blur: 0,
+  median_blur: 0,
+  bilateral_blur: 0,
   sharpen: 0,
   enhance: 0,
   denoise: 0,
@@ -27,6 +31,7 @@ const DEFAULT_PARAMS: PreviewParams = {
   log_transform: 0,
   power_law: 0,
   webp_quality: 100,
+  histogram: { r: 0, g: 0, b: 0, a: 1 },
 }
 
 type PreviewUiState = {
@@ -70,7 +75,10 @@ const PlaygroundForm: React.FC = () => {
 
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [previewUi, dispatchPreviewUi] = useReducer(previewUiReducer, initialPreviewUiState)
-  const [displayValues, setDisplayValues] = useState<PreviewParams>({ ...DEFAULT_PARAMS })
+  const [displayValues, setDisplayValues] = useState<PreviewParams>({
+    ...DEFAULT_PARAMS,
+    histogram: { r: 0, g: 0, b: 0, a: 1 },
+  })
   const localPreviewUrlRef = useRef<string | null>(null)
 
   const inputFileRef = useRef<HTMLInputElement | null>(null)
@@ -232,39 +240,95 @@ const PlaygroundForm: React.FC = () => {
         )}
       </div>
       {/* Right column — controls */}
-      <FieldSet className="h-full basis-1/3 overflow-hidden pr-2 xl:basis-1/4">
-        <FieldLegend>Enhancement</FieldLegend>
-        <FieldDescription>Adjust the enhancement level to improve the overall quality of your image.</FieldDescription>
+      <div className="flex h-full basis-1/3 flex-col gap-y-6 overflow-hidden pr-2 xl:basis-1/4">
+        <FieldGroup className="flex max-h-full flex-1 flex-col gap-10 overflow-y-auto pr-1 scrollbar-track-transparent">
+          {Object.entries(groupBy(BASIC_SLIDER_CONFIGS, (item) => item.group)).map(([groupLabel, filterGroup]) => {
+            return (
+              <FieldSet>
+                <FieldDescription>{groupLabel}</FieldDescription>
+                <FieldGroup>
+                  {filterGroup.map(({ key, label, min, max, step, description }) => (
+                    <HoverCard key={key}>
+                      <HoverCardTrigger>
+                        <Field>
+                          <FieldLabel className="flex justify-between">
+                            {label}
+                            <Badge variant="outline" render={<small>{displayValues[key]}</small>} />
+                          </FieldLabel>
+                          <Slider
+                            key={`${key}-${sessionId}`}
+                            defaultValue={[DEFAULT_PARAMS[key]]}
+                            value={[displayValues[key]]}
+                            min={min}
+                            max={max}
+                            step={step}
+                            disabled={!previewUi.hasPreview}
+                            onValueChange={(values) => setDisplayValues((prev) => ({ ...prev, [key]: values }))}
+                            onValueCommitted={(values) => handleSliderChange(key, values)}
+                          />
+                        </Field>
+                      </HoverCardTrigger>
+                      <HoverCardContent side="left" align="start">
+                        {description}
+                      </HoverCardContent>
+                    </HoverCard>
+                  ))}
+                </FieldGroup>
+              </FieldSet>
+            )
+          })}
+          <HoverCard>
+            <HoverCardTrigger>
+              <FieldGroup>
+                <FieldLabel>Histogram Equalization</FieldLabel>
+                <div className="grid grid-cols-4 gap-4">
+                  {(['r', 'g', 'b', 'a'] as const).map((channel: keyof PreviewParams['histogram']) => (
+                    <Field key={channel} orientation="vertical" className="items-center">
+                      <Badge variant="outline" className="max-w-12">
+                        {displayValues.histogram[channel]}
+                      </Badge>
+                      <Slider
+                        key={`histogram-${channel}-${sessionId}`}
+                        defaultValue={channel === 'a' ? 1 : 0}
+                        value={[displayValues.histogram[channel]]}
+                        min={channel === 'a' ? 0 : -1}
+                        max={1}
+                        step={0.1}
+                        orientation="vertical"
+                        disabled={!previewUi.hasPreview}
+                        aria-disabled={!previewUi.hasPreview}
+                        className={cn({
+                          '[&_*[data-slot=slider-range]]:bg-red-500': channel === 'r',
+                          '[&_*[data-slot=slider-range]]:bg-green-500': channel === 'g',
+                          '[&_*[data-slot=slider-range]]:bg-blue-500': channel === 'b',
+                          '[&_*[data-slot=slider-range]]:bg-accent': channel === 'a',
+                        })}
+                        onValueChange={(values) =>
+                          setDisplayValues((prev) => ({
+                            ...prev,
+                            histogram: { ...prev.histogram, [channel]: Array.isArray(values) ? values[0] : values },
+                          }))
+                        }
+                        onValueCommitted={(values) =>
+                          handleSliderChange(`histogram.${channel}` as keyof PreviewParams, values)
+                        }
+                      />
+                      <FieldLabel className="block text-center">{channel.toUpperCase()}</FieldLabel>
+                    </Field>
+                  ))}
+                </div>
+              </FieldGroup>
+            </HoverCardTrigger>
+            <HoverCardContent side="left" align="start">
+              Adjust the histogram equalization for each color channel to enhance the contrast and details in your
+              image. Modifying the histogram can help bring out hidden features and improve the overall visual quality
+              of your image.
+            </HoverCardContent>
+          </HoverCard>
+        </FieldGroup>
+
         <FieldSeparator />
 
-        <FieldGroup className="max-h-full flex-1 overflow-y-auto pr-1 scrollbar-track-transparent">
-          {SLIDER_CONFIGS.map(({ key, label, min, max, step, description }) => (
-            <HoverCard key={key}>
-              <HoverCardTrigger>
-                <Field>
-                  <FieldLabel className="flex justify-between">
-                    {label}
-                    <Badge variant="outline" render={<small>{displayValues[key]}</small>} />
-                  </FieldLabel>
-                  <Slider
-                    key={`${key}-${sessionId}`}
-                    defaultValue={[DEFAULT_PARAMS[key]]}
-                    value={[displayValues[key]]}
-                    min={min}
-                    max={max}
-                    step={step}
-                    disabled={!previewUi.hasPreview}
-                    onValueChange={(values) => setDisplayValues((prev) => ({ ...prev, [key]: values }))}
-                    onValueCommitted={(values) => handleSliderChange(key, values)}
-                  />
-                </Field>
-              </HoverCardTrigger>
-              <HoverCardContent side="left" align="start">
-                {description}
-              </HoverCardContent>
-            </HoverCard>
-          ))}
-        </FieldGroup>
         <FieldGroup>
           <Field orientation="horizontal" className="justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => handleReset()}>
@@ -277,7 +341,7 @@ const PlaygroundForm: React.FC = () => {
             </Button>
           </Field>
         </FieldGroup>
-      </FieldSet>
+      </div>
     </div>
   )
 }
