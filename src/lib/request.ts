@@ -1,6 +1,6 @@
 import { DEFAULT_COOKIE_OPTIONS } from '@/configs/cookie.config'
 import { HttpStatusCode } from '@/constants/http-code'
-import { redirect } from '@tanstack/react-router'
+import { notFound, redirect } from '@tanstack/react-router'
 import { getCookie, setCookie } from '@tanstack/react-start/server'
 import { type Options } from 'redaxios'
 import { axiosInstance, type RequestConfig } from '../configs/axios.config'
@@ -15,6 +15,10 @@ export async function request<R = any, D = any>(config: RequestConfig<D>) {
   return await axiosInstance<R>(config as Options)
     .then((res) => res.data)
     .catch(async (error) => {
+      console.error(error)
+
+      if (error.status === HttpStatusCode.NOT_FOUND) throw notFound()
+
       if (error.status === HttpStatusCode.UNAUTHORIZED) {
         try {
           const res = await axiosInstance.get<{ access_token: string }>('/auth/refresh-token', {
@@ -36,7 +40,7 @@ export async function request<R = any, D = any>(config: RequestConfig<D>) {
           throw redirect({ to: '/signin' })
         }
       }
-      console.error(error)
-      return Promise.reject(error)
+
+      throw error
     })
 }
