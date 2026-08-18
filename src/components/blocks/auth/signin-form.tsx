@@ -11,6 +11,7 @@ import { Link, redirect, useRouter } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { LogInIcon } from 'lucide-react'
 import React from 'react'
+import { toast } from 'sonner'
 
 const SignInForm: React.FC = () => {
   const signInFn = useServerFn(signInRPC)
@@ -20,6 +21,10 @@ const SignInForm: React.FC = () => {
     mutationFn: (data: TSignInValues) => signInFn({ data }),
     onSuccess: () => {
       router.invalidate().finally(() => router.navigate({ to: '/' }))
+    },
+    onError: (error) => {
+      console.error('Sign-in failed:', error)
+      toast.error(error?.message || 'Sign-in failed. Please try again.')
     },
   })
 
